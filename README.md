@@ -1,6 +1,6 @@
 # DDclass - A double-double class toolbox for MATLAB
 
-The dd (double-double) class provides approximately quadruple precision results.
+The dd (double-double) class provides approximately quadruple precision computation.
 
 Operations and functions for dd class can be used in the same manner as for double class.
 
