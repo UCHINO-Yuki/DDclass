@@ -60,6 +60,8 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
         ddpiby180       = dd(1.7453292519943295e-02,2.9486522708701687e-19,"no");       % pi/180
         dd180bypi       = dd(5.7295779513082323e+01,-1.9878495670576283e-15,"no");      % 180/pi
         ddpiby184320    = dd(1.7044230976507124e-05,2.8795432332716491e-22,"no");       % pi/180/1024
+        dd2bysqrtpi     = dd(1.1283791670955126e+00,1.5335459613165881e-17,"no");       % 2/sqrt(pi)
+        ddsqrt2bypi     = dd(7.9788456080286541e-01,-4.9846544045554601e-17,"no");      % sqrt(2/pi)
         ddflintmax      = dd(8.1129638414606682e+31,0,"no");                            % 2^106
         ddrealmax       = dd(1.7976931348623157e+308,1.9958403095347196e+292,"no");     % 2^1024*(1-2^-106)
         ddrealmin       = dd(realmin,0,"no");                                           % 2^-1074
@@ -80,6 +82,7 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
         log_tab         = logtable;                                                     % table of log(1+n/1024) for n=0:1024
         expfact_tab     = expfacttable;                                                 % table of 1/n! for n>=3
         logfact_tab     = logfacttable;                                                 % table of 1/(2n+1)/(2^(2n)) for n>=1
+        erffact_tab     = erffacttable;                                                 % table of 2^n/(2*n+1)!! for n>=1
     end
 
     %% Static mathods
@@ -290,6 +293,7 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
         a = log1p(a)
         [m,e] = log2(a)
         a = log10(a)
+        a = erf(a)
 
         a = sin(a)
         a = sind(a)
