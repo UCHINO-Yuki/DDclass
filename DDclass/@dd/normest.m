@@ -1,0 +1,47 @@
+function [N,cnt] = normest(a,tol)
+% NORMEST   2-norm estimate.
+%
+%   See also NORMEST
+%
+%   written ... 2024-02-23 ... UCHINO Yuki
+
+arguments (Input)
+    a (:,:) dd
+    tol (1,1) double {mustBePositive} = 1.e-32
+end
+
+if isempty(a)
+    [N,cnt] = normest(a.v1,tol);
+    return;
+end
+
+cnt = 0;
+maxiter = 100; % set max number of iterations to avoid infinite loop
+
+x = vecnorm(a,1,1)';
+N_x = vecnorm(x);
+N = N_x;
+if N.v1 == 0
+    return;
+end
+
+while 1
+    N_old = N;
+    x = x./N_x;
+    Ax = a*x;
+    if nnz(Ax) == 0
+        Ax = dd.rand(size(Ax));
+    end
+    x = a.'*Ax;
+    N_x = vecnorm(x);
+    N = N_x./vecnorm(Ax);
+    if abs(double(N-N_old)) <= tol*N.v1
+        break;
+    end
+    cnt = cnt+1;
+    if cnt > maxiter
+        warning('dd_class: normest: notconverge');
+        break;
+    end
+end
+end
