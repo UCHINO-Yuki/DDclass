@@ -1,0 +1,28 @@
+function c = cat(dim,a)
+% CAT  Concatenate arrays.
+%
+%   See also CAT
+%
+%   written ... 2024-02-23 ... UCHINO Yuki
+
+arguments (Input)
+    dim double
+end
+arguments (Input,Repeating)
+    a dd
+end
+if nargin == 1
+    c = dd.empty;
+    return
+end
+
+n = numel(a);
+b1{n} = a{n}.v1;
+b2{n} = a{n}.v2;
+for i=1:n-1
+    b1{i} = a{i}.v1;
+    b2{i} = a{i}.v2;
+end
+c = dd(cat(dim,b1{:}),cat(dim,b2{:}),"no");
+
+end
