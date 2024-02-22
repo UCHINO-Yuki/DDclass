@@ -7,12 +7,12 @@ Operations and functions for dd class can be used in the same manner as for doub
 Sparse matrices and gpuArray are supported as well.
 
 The following functions and operations are implemented using mixed-precision algorithms:
-- eig
-- mldivide (.\)
-- mrdivide (./)
-- mtimes (*)
-- sum
-- svd
+- `eig`
+- `mldivide` (`.\`)
+- `mrdivide` (`./`)
+- `mtimes` (`*`)
+- `sum`
+- `svd`
 
 ## System requirements
 MATLAB R2021b or later is required.
