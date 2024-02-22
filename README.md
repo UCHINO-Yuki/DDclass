@@ -1,8 +1,12 @@
 # DDclass - A double-double class toolbox for MATLAB
-This toolbox provides double-double (approximately quadruple precision) class for MATLAB.  
-Operations and functions for double-double class can be used in the same manner as for double class.  
+
+The dd (double-double) class provides approximately quadruple precision results.
+
+Operations and functions for double-double class can be used in the same manner as for double class.
+
 Sparse matrices and gpuArray are supported as well.
 
+## System requirements
 MATLAB R2021b or later is required.
 
 ## Installation
