@@ -2,7 +2,7 @@
 
 The dd (double-double) class provides approximately quadruple precision results.
 
-Operations and functions for double-double class can be used in the same manner as for double class.
+Operations and functions for dd class can be used in the same manner as for double class.
 
 Sparse matrices and gpuArray are supported as well.
 
