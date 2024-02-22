@@ -1,8 +1,12 @@
 # DDclass - A double-double class toolbox for MATLAB
+This toolbox provides double-double (approximately quadruple precision) class for MATLAB.
+Operations and functions for double-double class can be used in the same manner as for double class.
+Sparse matrices and gpuArray are supported as well.
+
 MATLAB R2021b or later is required.
 
 ## Installation
-1. Change the current folder to the destination folder where toolbox is installed.
+1. Change the current folder to "DDclass".
 2. Execute the `startDD` function to add the toolbox path to MATLAB's search path and compile the cu file.
 ```
 >> startDD;
@@ -14,4 +18,3 @@ Execude the following command to display the documentation:
 ```
 >> doc dd;
 ```
-Operations and functions for dd arrays can be used in the same manner as for double arrays.
