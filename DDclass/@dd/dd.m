@@ -6,53 +6,39 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     %   
     %   The following special functions are provided:
     %
-    %       DD() creates double-double entity (number, matrix, n-dim array).
-    %       
-    %           C = DD(A)               creates dd entity by conversion from A
-    %           C = DD(A,B)             creates dd entity by the sum of A and B
-    %           C = DD(A,B,'fast')      creates dd entity by the sum of A and B
-    %                                   using FastTwoSum
-    %           C = DD(A,B,'no')        creates dd entity by high order part A and low order part B
+    %       * DD() creates double-double numbers, matries, and n-dim arrays.
+    %       * DD.numSplit() sets the accurary of matrix multiplications.
+    %       * DD.Info returns the infomation (version etc.) about DDclass.
+    %       * startDD sets the DDclass path and (re-)compiles mexcuda.
     %
-    %           The input arguments must be the followings:
-    %               * real integer entities,
-    %               * real floating-point entities,
-    %               * logical entities,
-    %               * real symbolic entities.
-    %           Sparse and gpuArray are supported as well.
+    %   High and low order parts of a DD number D can be references by using
+    %   dotReference:
     %
-    %       DD.numSplit() sets the accurary of matrix multiplications.
-    %   
-    %           The larger the value, the more accurate the computation.
-    %           The lower the value, the faster the computation speed.
+    %       * D1 = D.v1 returns high order part of D
+    %       * D2 = D.v2 returns low order part of D
     %
-    %           dd.NUMSPLIT(k_new)         sets the value. The default is 5.
-    %           k_old = dd.NUMSPLIT        returns the current value
-    %           k_old = dd.NUMSPLIT(k_new) sets new value and returns the current value
+    %   double() also returns high and low order parts of a DD number D:
     %
-    %           The input argument must be real integer scalar.
+    %       * D1 = double(D)      returns high order part of D
+    %       * [D1,D2] = double(D) returns high and low order parts D1 and D2 of D.
     %
-    %       DD.Info returns the infomation (version etc.) about DDclass.
-    % 
-    %       startDD sets the DDclass path and (re-)compiles mexcuda.
-    %
-    %   Operations and functions for dd arrays can be used in the same manner as for double arrays.
+    %   Operations and functions for DD arrays can be used in the same manner as for double arrays.
     %
     %   Many of the MATLAB built-in functions implemented in MATLAB code can be overloaded without modification. 
     %   For example, compan, hadamard, wilkinson, linspace, anynan, allfinite, etc.
     %
-    %   See also DD.NUMSPLIT, DD.DD, DD.INFO, STARTDD
+    %   See also DD.NUMSPLIT, DD.DD, DD.INFO, STARTDD, DD.DOUBLE
     %
-    %   written ... 2024-02-23 ... UCHINO Yuki
+    %   written ... 2024-02-25 ... UCHINO Yuki
 
     %% Values of double-double
-    properties (GetAccess=public, SetAccess = private)
+    properties (GetAccess = public, SetAccess = private)
         v1 double {mustBeReal}  % high order part
         v2 double {mustBeReal}  % low order part
     end
 
     %% Private constants
-    properties (Constant, Access = protected)
+    properties (Constant, Access = protected, Hidden = true)
         ddpi            = dd(3.1415926535897931e+00,1.2246467991473532e-16,"no");       % pi
         ddpiby2         = dd(1.5707963267948966e+00,6.1232339957367660e-17,"no");       % pi/2
         ddpiby4         = dd(7.8539816339744828e-01,3.0616169978683830e-17,"no");       % pi/4
@@ -86,7 +72,7 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     end
 
     %% Static mathods
-    methods (Static, Access=public)
+    methods (Static, Access = public)
         Info
         out = numSplit(k)
         out = rand(varargin)
@@ -106,25 +92,32 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     end
 
     %% functions
-    methods (Access=public)
+    methods (Access = public)
         function c = dd(a,b,alg)
             % DD  Create double-double entity (number, matrix, n-dim array).
-            %
-            %   C = DD(A)               creates dd entity by conversion from A
-            %   C = DD(A,B)             creates dd entity by the sum of A and B
-            %   C = DD(A,B,'fast')      creates dd entity by the sum of A and B
-            %                           using FastTwoSum
-            %   C = DD(A,B,'no')        creates dd entity by high order part A and low order part B
+            %       
+            %   C = DD(A)           creates dd entity by conversion from A.
+            %   C = DD(A,B)         creates dd entity by the sum of A and B
+            %                       using TwoSum proposed by Knuth.
+            %   C = DD(A,B,'fast')  creates dd entity by the sum of A and B
+            %                       using FastTwoSum proposed by Dekker.
+            %                       This creation method requires 
+            %                           any(mod(A,pow2(B,-52))==0,'all') = 0.
+            %   C = DD(A,B,'no')    creates dd entity by A and B, where 
+            %                       A and B is high and low order parts.
+            %                       This creation method requires 
+            %                           all(abs(B)<=0.5*ulp(A),'all') = 1,
+            %                       where ulp(A) means Unit in the Last Place of A.
             %
             %   The input arguments must be the followings:
-            %       * real integer entities, 
-            %       * real floating-point entities, 
-            %       * logical entities, 
+            %       * real integer entities,
+            %       * real floating-point entities,
+            %       * logical entities,
             %       * real symbolic entities.
-            %
+            %       
             %   Sparse and gpuArray are supported as well.
             %
-            %   written ... 2024-02-23 ... UCHINO Yuki
+            %   written ... 2024-02-25 ... UCHINO Yuki
             
             arguments (Input)
                 a {mustBeReal} = []
