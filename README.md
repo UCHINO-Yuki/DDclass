@@ -26,7 +26,7 @@ MATLAB R2021b or later is required.
 3. You can also permanently save the search path by using the `pathtool` command and clicking "save".
 
 ## Usage
-Execude the following command to display the documentation:
+Execute the following command to display the documentation:
 ```
 >> doc dd;
 ```
