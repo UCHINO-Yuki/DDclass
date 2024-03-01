@@ -27,6 +27,40 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     %   Many of the MATLAB built-in functions implemented in MATLAB code can be overloaded without modification. 
     %   For example, compan, hadamard, wilkinson, linspace, anynan, allfinite, etc.
     %
+    %   Floating-point numerical constants, such as 
+    %       eps, 
+    %       flintmax, 
+    %       pi,
+    %       realmax,
+    %       realmin,
+    %   can be used as
+    %       dd.eps      or eps('dd'),
+    %       dd.flintmax or flintmax('dd'),
+    %       dd.pi,
+    %       dd.realmax  or realmax('dd'),
+    %       dd.realmin  or realmin('dd').
+    %
+    %   Floating-point arrays functions built in MATLAB, such as
+    %       empty,
+    %       eye,
+    %       inf,
+    %       nan,
+    %       ones,
+    %       rand,
+    %       randi,
+    %       randn,
+    %       zeros,
+    %   also can be used as
+    %       dd.empty(...) or empty(...,'dd'),
+    %       dd.eye(...)   or eye(...,'dd'),
+    %       dd.inf(...)   or inf(...,'dd'),
+    %       dd.nan(...)   or nan(...,'dd'),
+    %       dd.ones(...)  or ones(...,'dd'),
+    %       dd.rand(...)  or rand(...,'dd'),
+    %       dd.randi(...) or randi(...,'dd'),
+    %       dd.randn(...) or randn(...,'dd'),
+    %       dd.zeros(...) or zeros(...,'dd').
+    %
     %   See also DD.NUMSPLIT, DD.DD, DD.INFO, STARTDD, DD.DOUBLE
     %
     %   written ... 2024-02-25 ... UCHINO Yuki
