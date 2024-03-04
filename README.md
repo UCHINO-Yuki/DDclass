@@ -8,6 +8,7 @@ Sparse matrices and gpuArray are supported as well.
 
 The following functions and operations are implemented using mixed-precision algorithms:
 - `eig`
+- `inv`
 - `mldivide` (`\`)
 - `mrdivide` (`/`)
 - `mtimes` (`*`)
