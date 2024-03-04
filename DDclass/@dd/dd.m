@@ -64,6 +64,7 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     %   See also DD.NUMSPLIT, DD.DD, DD.INFO, STARTDD, DD.DOUBLE
     %
     %   written ... 2024-02-25 ... UCHINO Yuki
+    %   revised ... 2024-03-04 ... UCHINO Yuki
 
     %% Values of double-double
     properties (GetAccess = public, SetAccess = private)
@@ -379,6 +380,7 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
         c = mtimes(a,b)
         c = mldivide(a,b)
         c = mrdivide(b,a)
+        c = inv(a)
         N = norm(a,p)
         N = vecnorm(a,p,dim)
         [N,cnt] = normest(a,tol)
