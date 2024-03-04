@@ -4,7 +4,7 @@ function c = mldivide(a,b)
 %   See also MLDIVIDE
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
-%   revised ... 2024-03-04 ... UCHINO Yuki
+%   revised ... 2024-03-05 ... UCHINO Yuki
 
 arguments (Input)
     a (:,:) dd
@@ -41,7 +41,7 @@ if szA(1) ~= szA(2)
         r = ab-aa*c1;           % residual
         y = aa.v1\r.v1;         % solve a*y = r
         c = c1+y;               % update x
-        if ~any(double(c-c1),'all')
+        if all(c.v1==c1.v1,'all') && all(c.v2==c1.v2,'all')
             return;             % converged
         end
         c1 = c;
@@ -58,7 +58,7 @@ for i=1:10
     r = b-a*c1;             % residual
     y = a.v1\r.v1;          % solve a*y = r
     c = c1+y;               % update x
-    if ~any(double(c-c1),'all')
+    if all(c.v1==c1.v1,'all') && all(c.v2==c1.v2,'all')
         break;              % converged
     end
     c1 = c;

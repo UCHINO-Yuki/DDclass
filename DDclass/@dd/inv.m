@@ -3,7 +3,7 @@ function c = inv(a)
 %
 %   See also INV
 %
-%   written ... 2024-03-04 ... UCHINO Yuki
+%   written ... 2024-03-05 ... UCHINO Yuki
 
 arguments (Input)
     a (:,:) dd
@@ -32,7 +32,7 @@ for i=1:10
     r = -a*c1;                      % -a*inv(a)
     r(1:n+1:n*n) = r(1:n+1:n*n)+1;  % I-a*inv(a)
     c = c1 + c1.v1*r.v1;            % update inv(a)
-    if ~any(double(c-c1),'all')
+    if all(c.v1==c1.v1,'all') && all(c.v2==c1.v2,'all')
         break;                      % converged
     end
     c1 = c;
