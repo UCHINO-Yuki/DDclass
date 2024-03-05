@@ -4,10 +4,11 @@ function a = power(a,p)
 %   See also POWER
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
+%   revised ... 2024-03-05 ... UCHINO Yuki
 
 arguments (Input)
     a dd
-    p double {mustBeReal}
+    p dd {mustBeReal}
 end
 
 if isempty(a)
@@ -27,8 +28,12 @@ if any(finflag,'all')
     a.v2(finflag) = NaN;
 end
 
-% A.^0 & A.^1
-i = P==0;
+% if A.^1, return A
+i = P.v2==0;
+finflag = finflag | (P.v1==1 & i);
+
+% if A.^0, return 1
+i = P.v1==0 & i;
 if any(i,'all')
     a.v1(i) = 1;
     a.v2(i) = 0;
@@ -38,20 +43,13 @@ if all(finflag,'all')
     return;
 end
 
-% A.^negative
-i = P<0;
-if any(i,'all')
-    a(i) = nthroot(a(i),-P(i));
-    finflag = finflag | i;
-end
-if all(finflag,'all')
-    return;
-end
-
 %% A.^integar
-i = (P==round(P)) & ~finflag;
+i = (P.v1==round(P.v1)) & ~finflag;
 if any(i,'all')
-    [a.v1(i),a.v2(i)] = npow(a.v1(i),a.v1(i),P(i));
+    j = i & P.v1<0;
+    P(j) = -P(j);
+    [a.v1(i),a.v2(i)] = npow(a.v1(i),a.v2(i),P.v1(i));
+    a(j) = 1./a(j);
     finflag = finflag | i;
 end
 if all(finflag,'all')
@@ -60,5 +58,4 @@ end
 
 %% otherwise
 a(~finflag) = exp(P(~finflag).*log(a(~finflag)));
-
 end

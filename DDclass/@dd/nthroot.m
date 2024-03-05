@@ -4,6 +4,7 @@ function c = nthroot(a,p)
 %   See also NTHROOT
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
+%   revised ... 2024-03-05 ... UCHINO Yuki
 
 arguments (Input)
     a dd
@@ -28,7 +29,7 @@ if any(finflag,'all')
 end
 
 % a=1 or p=1, return a
-i = (A1 == 1 & A2 == 0) | P == 1;
+i = (c.v1 == 1 & c.v2 == 0) | P == 1;
 finflag = finflag | i;
 
 % p=2

@@ -389,6 +389,7 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
         c = mtimes(a,b)
         c = mldivide(a,b)
         c = mrdivide(b,a)
+        c = mpower(a,b)
         c = inv(a)
         N = norm(a,p)
         N = vecnorm(a,p,dim)
