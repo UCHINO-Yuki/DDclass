@@ -2,17 +2,17 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
         < matlab.mixin.indexing.RedefinesParen ...
         & matlab.mixin.indexing.RedefinesDot ...
         & matlab.mixin.CustomDisplay
-    % DD  class definition of Double-Double numbers
+    % DD  class definition of double-double (DD) numbers
     %   
     %   The following special functions are provided:
     %
-    %       * DD() creates double-double numbers, matries, and n-dim arrays.
+    %       * DD() creates DD numbers, matries, and n-dim arrays.
     %       * DD.numSplit() sets the accurary of matrix multiplications.
     %       * DD.Info returns the infomation (version etc.) about DDclass.
     %       * startDD sets the DDclass path and (re-)compiles mexcuda.
     %
-    %   High and low order parts of a DD number D can be references by using
-    %   dotReference:
+    %   High and low order parts of a DD number D can be references 
+    %   by using dotReference:
     %
     %       * D1 = D.v1 returns high order part of D
     %       * D2 = D.v2 returns low order part of D
@@ -20,12 +20,14 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     %   double() also returns high and low order parts of a DD number D:
     %
     %       * D1 = double(D)      returns high order part of D
-    %       * [D1,D2] = double(D) returns high and low order parts D1 and D2 of D.
+    %       * [D1,D2] = double(D) returns high and low order parts of D.
     %
-    %   Operations and functions for DD arrays can be used in the same manner as for double arrays.
+    %   Operations and functions for DD arrays can be used 
+    %   in the same manner as for double arrays.
     %
-    %   Many of the MATLAB built-in functions implemented in MATLAB code can be overloaded without modification. 
-    %   For example, compan, hadamard, wilkinson, linspace, anynan, allfinite, etc.
+    %   Many of the MATLAB built-in functions implemented in MATLAB code, 
+    %   such as hadamard, wilkinson, linspace, anynan, allfinite, etc.,
+    %   can be overloaded without modification. 
     %
     %   Floating-point numerical constants, such as 
     %       eps, 
@@ -34,11 +36,11 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     %       realmax,
     %       realmin,
     %   can be used as
-    %       dd.eps      or eps('dd'),
-    %       dd.flintmax or flintmax('dd'),
-    %       dd.pi,
-    %       dd.realmax  or realmax('dd'),
-    %       dd.realmin  or realmin('dd').
+    %       DD.eps      or eps('DD'),
+    %       DD.flintmax or flintmax('DD'),
+    %       DD.pi,
+    %       DD.realmax  or realmax('DD'),
+    %       DD.realmin  or realmin('DD').
     %
     %   Floating-point arrays functions built in MATLAB, such as
     %       empty,
@@ -51,20 +53,21 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     %       randn,
     %       zeros,
     %   also can be used as
-    %       dd.empty(...) or empty(...,'dd'),
-    %       dd.eye(...)   or eye(...,'dd'),
-    %       dd.inf(...)   or inf(...,'dd'),
-    %       dd.nan(...)   or nan(...,'dd'),
-    %       dd.ones(...)  or ones(...,'dd'),
-    %       dd.rand(...)  or rand(...,'dd'),
-    %       dd.randi(...) or randi(...,'dd'),
-    %       dd.randn(...) or randn(...,'dd'),
-    %       dd.zeros(...) or zeros(...,'dd').
+    %       DD.empty(...) or empty(...,'DD'),
+    %       DD.eye(...)   or eye(...,'DD'),
+    %       DD.inf(...)   or inf(...,'DD'),
+    %       DD.nan(...)   or nan(...,'DD'),
+    %       DD.ones(...)  or ones(...,'DD'),
+    %       DD.rand(...)  or rand(...,'DD'),
+    %       DD.randi(...) or randi(...,'DD'),
+    %       DD.randn(...) or randn(...,'DD'),
+    %       DD.zeros(...) or zeros(...,'DD').
     %
     %   See also DD.NUMSPLIT, DD.DD, DD.INFO, STARTDD, DD.DOUBLE
     %
     %   written ... 2024-02-25 ... UCHINO Yuki
     %   revised ... 2024-03-04 ... UCHINO Yuki
+    %   revised ... 2024-03-05 ... UCHINO Yuki
 
     %% Values of double-double
     properties (GetAccess = public, SetAccess = private)
@@ -129,16 +132,19 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     %% functions
     methods (Access = public)
         function c = dd(a,b,alg)
-            % DD  Create double-double entity (number, matrix, n-dim array).
+            % DD  Create double-double (DD) number, matrix, n-dim array.
             %       
-            %   C = DD(A)           creates dd entity by conversion from A.
-            %   C = DD(A,B)         creates dd entity by the sum of A and B
+            %   C = DD(A)           creates DD entity by conversion from A.
+            %
+            %   C = DD(A,B)         creates DD entity by the sum of A and B
             %                       using TwoSum proposed by Knuth.
-            %   C = DD(A,B,'fast')  creates dd entity by the sum of A and B
+            %
+            %   C = DD(A,B,'fast')  creates DD entity by the sum of A and B
             %                       using FastTwoSum proposed by Dekker.
             %                       This creation method requires 
             %                           any(mod(A,pow2(B,-52))==0,'all') = 0.
-            %   C = DD(A,B,'no')    creates dd entity by A and B, where 
+            %
+            %   C = DD(A,B,'no')    creates DD entity by A and B, where 
             %                       A and B is high and low order parts.
             %                       This creation method requires 
             %                           all(abs(B)<=0.5*ulp(A),'all') = 1,
@@ -152,7 +158,10 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
             %       
             %   Sparse and gpuArray are supported as well.
             %
+            %   See also DD
+            %
             %   written ... 2024-02-25 ... UCHINO Yuki
+            %   revised ... 2024-03-05 ... UCHINO Yuki
             
             arguments (Input)
                 a {mustBeReal} = []
