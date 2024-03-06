@@ -4,6 +4,7 @@ function N = vecnorm(a,p,dim)
 %   See also VECNORM
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
+%   revised ... 2024-03-06 ... UCHINO Yuki
 
 arguments (Input)
     a dd
@@ -39,6 +40,9 @@ if p == 1
 elseif isinf(p)
     B = abs(a);
     N = max(B,[],dim);
+elseif p==2
+    N = sum(a.*a,dim);
+    N = sqrt(N);
 else
     B = abs(a);
     B = power(B,p);

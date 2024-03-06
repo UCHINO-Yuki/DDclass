@@ -4,6 +4,7 @@ function [N,cnt] = normest(a,tol)
 %   See also NORMEST
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
+%   revised ... 2024-03-06 ... UCHINO Yuki
 
 arguments (Input)
     a (:,:) dd
@@ -16,7 +17,7 @@ if isempty(a)
 end
 
 cnt = 0;
-maxiter = 100; % set max number of iterations to avoid infinite loop
+maxiter = 600; % set max number of iterations to avoid infinite loop
 
 x = vecnorm(a,1,1)';
 N_x = vecnorm(x);
