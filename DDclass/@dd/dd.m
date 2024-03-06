@@ -6,10 +6,15 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     %   
     %   The following special functions are provided:
     %
-    %       * DD() creates DD numbers, matries, and n-dim arrays.
+    %       * DD()          creates DD numbers, matries, and n-dim arrays.
+    %                       Execute "help dd.dd" command to see the help text.
+    %
     %       * DD.numSplit() sets the accurary of matrix multiplications.
-    %       * DD.Info returns the infomation (version etc.) about DDclass.
-    %       * startDD sets the DDclass path and (re-)compiles mexcuda.
+    %                       Execute "help dd.numSplit" command to see the help text.
+    %
+    %       * DD.Info       returns the infomation (version etc.) about DDclass.
+    %
+    %       * startDD       sets the DDclass path and (re-)compiles mexcuda.
     %
     %   High and low order parts of a DD number D can be references 
     %   by using dotReference:
@@ -68,6 +73,7 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     %   written ... 2024-02-25 ... UCHINO Yuki
     %   revised ... 2024-03-04 ... UCHINO Yuki
     %   revised ... 2024-03-05 ... UCHINO Yuki
+    %   revised ... 2024-03-06 ... UCHINO Yuki
 
     %% Values of double-double
     properties (GetAccess = public, SetAccess = private)
