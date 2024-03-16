@@ -4,6 +4,7 @@ function a = exp(a)
 %   See also EXP
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
+%   revised ... 2024-03-17 ... UCHINO Yuki
 
 %% the exception cases
 if isempty(a)
@@ -52,12 +53,11 @@ anyflag = any(finflag,'all');
 if anyflag
     xtmp = a(~finflag);
 else
-    rowflag = isrow(a);
-    if rowflag
-        xtmp = a.';
-    else
-        xtmp = a;
-    end
+    xtmp = a;
+end
+rowflag = isrow(xtmp);
+if rowflag
+    xtmp = xtmp.';
 end
 
 invL = 1.4773197218702985e+03;              % 1024/log(2)
@@ -80,13 +80,12 @@ if issparse(a.v1)
 end
 e = ldexp(tab + tab .* Q, M);
 
+if rowflag
+    e = e.';
+end
 if anyflag
     a(~finflag) = e;
 else
-    if rowflag
-        a = e.';
-    else
-        a = e;
-    end
+    a = e;
 end
 end

@@ -4,6 +4,7 @@ function a = cotd(a)
 %   See also COTD
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
+%   revised ... 2024-03-17 ... UCHINO Yuki
 
 %% the exception cases
 if isempty(a)
@@ -41,12 +42,11 @@ anyflag = any(finflag,'all');
 if anyflag
     r = a(~finflag);
 else
-    rowflag = isrow(a);
-    if rowflag
-        r = a.';
-    else
-        r = a;
-    end
+    r = a;
+end
+rowflag = isrow(r);
+if rowflag
+    r = r.';
 end
 
 % Argument reduction k*pi/1024 + r := a
@@ -86,7 +86,11 @@ cosr = 1 + ldexp(-r2,-1) + r2.*cosr;
 j1 = sink.*cosr + cosk.*sinr;
 j2 = cosk.*cosr - sink.*sinr;
 if anyflag
-    a(~finflag) = j2./j1;
+    if rowflag
+        a(~finflag) = (j2./j1).';
+    else
+        a(~finflag) = j2./j1;
+    end
 else
     if rowflag
         a = (j2./j1).';

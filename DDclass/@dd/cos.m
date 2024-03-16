@@ -7,6 +7,7 @@ function a = cos(a)
 %   with a =: k*pi/1024 + r
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
+%   revised ... 2024-03-17 ... UCHINO Yuki
 
 %% the exception cases
 if isempty(a)
@@ -41,12 +42,11 @@ anyflag = any(finflag,'all');
 if anyflag
     r = a(~finflag);
 else
-    rowflag = isrow(a);
-    if rowflag
-        r = a.';
-    else
-        r = a;
-    end
+    r = a;
+end
+rowflag = isrow(r);
+if rowflag
+    r = r.';
 end
 
 % Argument reduction k*pi/1024 + r := a
@@ -95,7 +95,11 @@ cosr = 1 + ldexp(-r2,-1) + r2.*cosr;
 
 % cos(a) := cosk.*cosr - sink.*sinr
 if anyflag
-    a(~finflag) = cosk.*cosr - sink.*sinr;
+    if rowflag
+        a(~finflag) = (cosk.*cosr - sink.*sinr).';
+    else
+        a(~finflag) = cosk.*cosr - sink.*sinr;
+    end
 else
     if rowflag
         a = (cosk.*cosr - sink.*sinr).';
