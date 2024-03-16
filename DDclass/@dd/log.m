@@ -4,6 +4,7 @@ function a = log(a)
 %   See also LOG
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
+%   revised ... 2024-03-17 ... UCHINO Yuki
 
 %% the exception cases
 if isempty(a)
@@ -57,12 +58,11 @@ anyflag = any(finflag,'all');
 if anyflag
     xtmp = a(~finflag);
 else
-    rowflag = isrow(a);
-    if rowflag
-        xtmp = a.';
-    else
-        xtmp = a;
-    end
+    xtmp = a;
+end
+rowflag = isrow(xtmp);
+if rowflag
+    xtmp = xtmp.';
 end
 
 % 1 <= 2^-M . xtmp = Y1 + Y2 <= 2
@@ -93,14 +93,13 @@ if issparse(a.v1)
 end
 btmp = mlog2 + logF + Q;
 
+if rowflag
+    btmp = btmp.';
+end
 if anyflag
     a(~finflag) = btmp;
 else
-    if rowflag
-        a = btmp.';
-    else
-        a = btmp;
-    end
+    a = btmp;
 end
 
 end

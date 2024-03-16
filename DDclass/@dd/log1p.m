@@ -4,6 +4,7 @@ function a = log1p(a)
 %   See also LOG1P
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
+%   revised ... 2024-03-17 ... UCHINO Yuki
 
 %% the exception cases
 if isempty(a)
@@ -73,12 +74,11 @@ anyflag = any(finflag,'all');
 if anyflag
     xtmp = a(~finflag) + 1;
 else
-    rowflag = isrow(a);
-    if rowflag
-        xtmp = a.' + 1;
-    else
-        xtmp = a + 1;
-    end
+    xtmp = a + 1;
+end
+rowflag = isrow(xtmp);
+if rowflag
+    xtmp = xtmp.';
 end
 
 % 1 <= 2^-M . c = Y1 + Y2 <= 2
@@ -111,13 +111,12 @@ if issparse(a.v1)
 end
 xtmp = mlog2 + logF + Q;
 
+if rowflag
+    xtmp = xtmp.';
+end
 if anyflag
     a(~finflag) = xtmp;
 else
-    if rowflag
-        a = xtmp.';
-    else
-        a = xtmp;
-    end
+    a = xtmp;
 end
 end

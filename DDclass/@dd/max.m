@@ -4,6 +4,7 @@ function [m,i] = max(a,b,opt1,opt2,opt3,opt4,opt5)
 %   See also MAX
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
+%   revised ... 2024-03-17 ... UCHINO Yuki
 
 arguments (Input)
     a dd
@@ -17,7 +18,7 @@ end
 
 %% initial flags
 onlyA = true;
-dim = 1;
+dim = find(size(a.v1)>1,1);
 linear = false;
 omitnan = true;
 compareabs = false;
@@ -30,14 +31,13 @@ switch nargin
     case 7
         % A: dd
         % B: []
-        % opt1: "1", "2", or "all"
+        % opt1: dim or "all"
         % opt2: "linear"
         % opt3: missingflag
         % opt4: "ComparisonMethod"
         % opt5: method
         if ~isempty(b)...
                 || any(szb ~= 0)...
-                || ~ismember(opt1,["1","2","all"])...
                 || ~strcmp(opt2,"linear")...
                 || ~ismember(opt3,missingflaglist)...
                 || ~strcmp(opt4,"ComparisonMethod")...
@@ -45,6 +45,9 @@ switch nargin
             error('Invalid input.');
         end
         dim = double(opt1);
+        if dim < 1 && ~strcmp(opt1,"all")
+            error('Invalid input.');
+        end
         if isnan(dim)
             dim = "all";
         end
@@ -97,19 +100,21 @@ switch nargin
         else
             % A: dd
             % B: []
-            % opt1: "1", "2", or "all"
+            % opt1: dim or "all"
             % opt2: missingflag
             % opt3: "ComparisonMethod"
             % opt4: method
             if ~isempty(b)...
                     || any(szb ~= 0)...
-                    || ~ismember(opt1,["1","2","all"])...
                     || ~ismember(opt2,missingflaglist)...
                     || ~strcmp(opt3,"ComparisonMethod")...
                     || ~ismember(opt4,methodlist)
                 error('Invalid input.');
             end
             dim = double(opt1);
+            if dim < 1 && ~strcmp(opt1,"all")
+                error('Invalid input.');
+            end
             if isnan(dim)
                 dim = "all";
             end
@@ -156,14 +161,16 @@ switch nargin
             elseif strcmp(opt2,"linear")
                 % A: dd
                 % B: []
-                % opt1: "1", "2", or "all"
+                % opt1: dim or "all"
                 % opt2: "linear"
                 % opt3: missingflag
-                if ~ismember(opt1,["1","2","all"])...
-                        || ~ismember(opt3,missingflaglist)
+                if ~ismember(opt3,missingflaglist)
                     error('Invalid input.');
                 end
                 dim = double(opt1);
+                if dim < 1 && ~strcmp(opt1,"all")
+                    error('Invalid input.');
+                end
                 if isnan(dim)
                     dim = "all";
                 end
@@ -180,15 +187,17 @@ switch nargin
             else
                 % A: dd
                 % B: []
-                % opt1: "1", "2", or "all"
+                % opt1: dim or "all"
                 % opt2: "ComparisonMethod"
                 % opt3: method
-                if ~ismember(opt1,["1","2","all"])...
-                        || ~strcmp(opt2,"ComparisonMethod")...
+                if ~strcmp(opt2,"ComparisonMethod")...
                         || ~ismember(opt3,methodlist)
                     error('Invalid input.');
                 end
                 dim = double(opt1);
+                if dim < 1 && ~strcmp(opt1,"all")
+                    error('Invalid input.');
+                end
                 if isnan(dim)
                     dim = "all";
                 end
@@ -289,16 +298,16 @@ switch nargin
             elseif strcmp(opt2,"linear")
                 % A: dd
                 % B: []
-                % opt1: "1", "2", or "all"
+                % opt1: dim or "all"
                 % opt2: "linear"
-                if ~ismember(opt1,["1","2","all"])
+                dim = double(opt1);
+                if dim < 1 && ~strcmp(opt1,"all")
                     error('Invalid input.');
                 end
-                linear = true;
-                dim = double(opt1);
                 if isnan(dim)
                     dim = "all";
                 end
+                linear = true;
                 if isempty(a)
                     m = dd(max(a.v1,[],dim,opt2));
                     i = m;
@@ -308,13 +317,15 @@ switch nargin
             else
                 % A: dd
                 % B: []
-                % opt1: "1", "2", "all"
+                % opt1: dim "all"
                 % opt2: missingflag
-                if ~ismember(opt1,["1","2","all"])...
-                        || ~ismember(opt2,missingflaglist)
+                if ~ismember(opt2,missingflaglist)
                     error('Invalid input.');
                 end
                 dim = double(opt1);
+                if dim < 1 && ~strcmp(opt1,"all")
+                    error('Invalid input.');
+                end
                 if isnan(dim)
                     dim = "all";
                 end
@@ -374,27 +385,10 @@ switch nargin
                 end
                 linear = true;
 
-            elseif ismember(opt1,["1","2","all"])
-                % A: dd
-                % B: []
-                % opt1: "1", "2", or "all"
-                dim = double(opt1);
-                if isnan(dim)
-                    dim = "all";
-                end
-                if isempty(a)
-                    m = dd(max(a.v1,[],dim));
-                    i = m;
-                    return;
-                end
-
-            else
+            elseif ismember(opt1,missingflaglist)
                 % A: dd
                 % B: []
                 % opt1: missingflag
-                if ~ismember(opt1,missingflaglist)
-                    error('Invalid input.');
-                end
                 if isempty(a)
                     m = dd(max(a.v1,[],opt1));
                     i = m;
@@ -404,6 +398,22 @@ switch nargin
                     omitnan = false;
                 end
 
+            else
+                % A: dd
+                % B: []
+                % opt1: dim or "all"
+                dim = double(opt1);
+                if dim < 1 && ~strcmp(opt1,"all")
+                    error('Invalid input.');
+                end
+                if isnan(dim)
+                    dim = "all";
+                end
+                if isempty(a)
+                    m = dd(max(a.v1,[],dim));
+                    i = m;
+                    return;
+                end
             end
         else
             % A: dd
@@ -464,6 +474,11 @@ switch nargin
             i = m;
             return;
         end
+        if isscalar(a)
+            m = a;
+            i = 1;
+            return;
+        end
 
     otherwise
         error('Invalid input.');
@@ -500,14 +515,12 @@ if onlyA
     end
 
     if ~linear
-        h = size(itmp,1);
         if isnumeric(dim)
-            if dim == 1
-                i = mod(i,h);
-                i(i==0) = h;
-            elseif dim == 2
-                i = ceil(i./h);
-            end
+            h = prod(size(itmp,1:dim-1));
+            i = ceil(i./h);
+            h = size(itmp,dim);
+            i = mod(i,h);
+            i(i==0) = h;
         end
     end
 

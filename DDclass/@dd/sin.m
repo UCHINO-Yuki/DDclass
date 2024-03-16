@@ -7,6 +7,7 @@ function a = sin(a)
 %   with a =: k*pi/1024 + r
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
+%   revised ... 2024-03-17 ... UCHINO Yuki
 
 %% the exception cases
 if isempty(a)
@@ -34,12 +35,11 @@ anyflag = any(finflag,'all');
 if anyflag
     r = a(~finflag);
 else
-    rowflag = isrow(a);
-    if rowflag
-        r = a.';
-    else
-        r = a;
-    end
+    r = a;
+end
+rowflag = isrow(r);
+if rowflag
+    r = r.';
 end
 
 % Argument reduction k*pi/1024 + r := a
@@ -88,7 +88,11 @@ cosr = 1 + ldexp(-r2,-1) + r2.*cosr;
 
 % sin(a) := sink.*cosr + cosk.*sinr
 if anyflag
-    a(~finflag) = sink.*cosr + cosk.*sinr;
+    if rowflag
+        a(~finflag) = (sink.*cosr + cosk.*sinr).';
+    else
+        a(~finflag) = sink.*cosr + cosk.*sinr;
+    end
 else
     if rowflag
         a = (sink.*cosr + cosk.*sinr).';
