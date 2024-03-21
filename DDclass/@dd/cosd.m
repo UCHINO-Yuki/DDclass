@@ -8,6 +8,7 @@ function a = cosd(a)
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
 %   revised ... 2024-03-17 ... UCHINO Yuki
+%   revised ... 2024-03-21 ... UCHINO Yuki
 
 %% the exception cases
 if isempty(a)
@@ -58,11 +59,16 @@ if rowflag
     r = r.';
 end
 
-% Argument reduction k*pi/1024 + r := a
-k = round(r.v1 .* 5.6888888888888891e+00);      % r*1024/180
-r = (ldexp(r,10) - 180.*k) .* dd.ddpiby184320;  % .* pi/1024/180
-j1 = k-pow2(floor(pow2(k,-11)),11);             % j1 = mod(k,2048)
-j2 = k-pow2(floor(pow2(k,-10)),10);             % j2 = mod(k,1024)
+% Argument reduction k*pi/1024 + r := a*pi/180
+failflag = any(abs(r.v1) > 377487360, 'all');
+r = ldexp(r,10);                        % r*1024
+k = round(r./180);                      % round(r/180)
+r = (r - 180.*k) .* dd.ddpiby184320;    % .* pi/1024/180
+if failflag || any(abs(r.v1)>=1.5339807878856414e-03,'all') 
+    warning([mfilename ' for dd: Cannot guarantee the success of argument reduction.']);
+end
+j1 = double(k-ldexp(floor(ldexp(k,-11)),11));   % j1 := mod(k,2048)
+j2 = mod(j1,1024);                              % j2 := mod(k,1024)
 
 % sink := sin(k.*pi/1024) using table
 sgn = -1.*(j1>1024)+(j1<=1024);

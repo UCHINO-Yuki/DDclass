@@ -6,6 +6,7 @@ function a = asinh(a)
 %   asinh(a) = log(a + sqrt(a.^2 + 1))
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
+%   revised ... 2024-03-21 ... UCHINO Yuki
 
 %% the exception cases
 if isempty(a)
@@ -22,7 +23,9 @@ if all(finflag,'all')
 end
 
 %% other cases
-a(~finflag) = abs(a(~finflag));
+sgn = sign(a.v1);
+a.v1(~finflag) = sgn .* a.v1(~finflag);
+a.v2(~finflag) = sgn .* a.v2(~finflag);
 
 % for small |a|
 i = ~finflag & (a.v1<1.e-8);
@@ -103,5 +106,7 @@ end
 i = ~finflag;
 [c1,c2] = dd_sqr(a.v1(i),a.v2(i));
 a(i) = log(a(i) + sqrt(dd(c1,c2,"no")+1));
+a.v1(i) = sgn(i) .* a.v1(i);
+a.v2(i) = sgn(i) .* a.v2(i);
 
 end

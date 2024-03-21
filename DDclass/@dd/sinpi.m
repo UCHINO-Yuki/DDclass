@@ -8,6 +8,7 @@ function a = sinpi(a)
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
 %   revised ... 2024-03-17 ... UCHINO Yuki
+%   revised ... 2024-03-21 ... UCHINO Yuki
 
 arguments (Input)
     a dd
@@ -21,19 +22,24 @@ end
 % if a = nan, return nan (= a)
 finflag = isnan(a.v1);
 
-% if a = integers, return 0
-i = (a==round(a)) & ~finflag;
-if any(i,'all')
-    a.v1(i) = 0;
-    a.v2(i) = 0;
-    finflag = finflag | i;
-end
-
 % if a = inf or -inf, return nan
 i = isinf(a.v1);
 if any(i,'all')
     a.v1(i) = NaN;
     a.v2(i) = NaN;
+    finflag = finflag | i;
+end
+
+% if a = integer, return 1, -1, or 0
+a2 = ldexp_(a,2);
+i = a2 == round(a2) & ~finflag;
+if any(i,'all')
+    ai = a2(i);
+    amod4 = double(ai - ldexp_(floor(ldexp_(ai,0.25)),4));
+    ai(amod4 == 0 | amod4 == 2) = 0;
+    ai(amod4 == 1) = 1;
+    ai(amod4 == 3) = -1;
+    a(i) = ai;
     finflag = finflag | i;
 end
 
@@ -53,11 +59,11 @@ if rowflag
     r = r.';
 end
 
-% Argument reduction k*pi/1024 + r := a
-k = round(pow2(r.v1,10));                   % r*1024
-r = (r - pow2(k,-10)) .* dd.ddpi;           % r*pi - k*pi/1024
-j1 = k-pow2(floor(pow2(k,-11)),11);         % j1 = mod(k,2048)
-j2 = k-pow2(floor(pow2(k,-10)),10);         % j2 = mod(k,1024)
+% Argument reduction k*pi/1024 + r := a * pi
+k = round(ldexp(r,10));                         % round(r*1024)
+r = (r - ldexp(k,-10)) .* dd.ddpi;              % r*pi - k*pi/1024
+j1 = double(k-ldexp(floor(ldexp(k,-11)),11));   % j1 := mod(k,2048)
+j2 = mod(j1,1024);                              % j2 := mod(k,1024)
 
 % sink := sin(k.*pi/1024) using table
 sgn = -1.*(j1>1024)+(j1<=1024);

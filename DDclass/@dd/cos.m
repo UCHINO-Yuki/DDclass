@@ -8,6 +8,7 @@ function a = cos(a)
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
 %   revised ... 2024-03-17 ... UCHINO Yuki
+%   revised ... 2024-03-21 ... UCHINO Yuki
 
 %% the exception cases
 if isempty(a)
@@ -50,23 +51,37 @@ if rowflag
 end
 
 % Argument reduction k*pi/1024 + r := a
-invpi = 3.2594932345220167e+02;                     % 1024/pi
-k = round(r.v1 .* invpi);
+idx = abs(r.v1) > 6.588397316661142e+06 & any(r.v2);
+failflag = any(idx, 'all');
+k = round(r .* dd.dd1024bypi);
 if issparse(k)
-    [j1,j2] = TwoProd(k,3.0679615757712823e-03);    % k*pi/1024
-    r = r - dd(j1,j2,"no");
-    [j1,j2] = TwoProd(k,1.1959441397923371e-19);
-    r = r - dd(j1,j2,"no");
-    r = r + k.*2.9245798923030661e-36;
+    for i=1:5
+        [j1,j2] = TwoProd(k.v1,dd.piby1024_tab(i));    % k*pi/1024
+        rr = r - dd(j1,j2,"no");
+        [j1,j2] = TwoProd(k.v2,dd.piby1024_tab(i));
+        rr = rr - dd(j1,j2,"no");
+        if all(r.v1==rr.v1,'all') && all(r.v2==rr.v2,'all')
+            break;
+        end
+        r = rr;
+    end
 else
-    [j1,j2] = TwoProdFMA(k,3.0679615757712823e-03);
-    r = r - dd(j1,j2,"no");
-    [j1,j2] = TwoProdFMA(k,1.1959441397923371e-19);
-    r = r - dd(j1,j2,"no");
-    r = r + k.*2.9245798923030661e-36;
+    for i=1:5
+        [j1,j2] = TwoProdFMA(k.v1,dd.piby1024_tab(i));    % k*pi/1024
+        rr = r - dd(j1,j2,"no");
+        [j1,j2] = TwoProdFMA(k.v2,dd.piby1024_tab(i));
+        rr = rr - dd(j1,j2,"no");
+        if all(r.v1==rr.v1,'all') && all(r.v2==rr.v2,'all')
+            break;
+        end
+        r = rr;
+    end
 end
-j1 = k-pow2(floor(pow2(k,-11)),11);             % j1 = mod(k,2048)
-j2 = k-pow2(floor(pow2(k,-10)),10);             % j2 = mod(k,1024)
+if failflag || any(abs(r.v1)>=1.5339807878856414e-03,'all') 
+    warning([mfilename ' for dd: Cannot guarantee the success of argument reduction.']);
+end
+j1 = double(k-ldexp(floor(ldexp(k,-11)),11));   % j1 := mod(k,2048)
+j2 = mod(j1,1024);                              % j2 := mod(k,1024)
 
 % sink := sin(k.*pi/1024) using table
 sgn = -1.*(j1>1024)+(j1<=1024);

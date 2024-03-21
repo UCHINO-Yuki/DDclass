@@ -4,6 +4,7 @@ function c = atan2d(a,b)
 %   See also ATAN2D
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
+%   revised ... 2024-03-21 ... UCHINO Yuki
 
 arguments (Input)
     a dd
@@ -99,7 +100,7 @@ vv(i) = tmp;
 
 % for general z
 z = vv./uu;
-k = z.v1 >= 1.e-7;
+k = z.v1 >= 1.4648437500000002e-02; % ceil(1.4648437500000002e-02 * 2^1024) = 16
 index = ceil(pow2(z.v1(k),10));
 q = dd.atan_tab(index-15);
 d = pow2(index,-10);
@@ -123,8 +124,14 @@ z(k) = q2;
 k = ~k & (z.v1 >= 1.1102230246251565e-16);
 zk = z(k);
 zk2 = zk.*zk;
-q2 = zk./(1+zk2./(3+ldexp(zk2,2)./5));
-z(k) = dd(q2);
+q2 = zk2.*dd(3.2666666666666666e+00,5.9211894646675015e-17,"no");   % zk2*49/15
+q2 = zk2.*36./(13+q2);
+q2 = zk2.*25./(11+q2);
+q2 = ldexp_(zk2,16)./(9+q2);
+q2 = zk2.*9./(7+q2);
+q2 = ldexp_(zk2,4)./(5+q2);
+q2 = zk2./(3+q2);
+z(k) = zk./(1+q2);
 
 z(i) = dd.ddpiby2 - z(i);
 z(sgnx<0) = dd.ddpi - z(sgnx<0);

@@ -74,6 +74,8 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     %   revised ... 2024-03-04 ... UCHINO Yuki
     %   revised ... 2024-03-05 ... UCHINO Yuki
     %   revised ... 2024-03-06 ... UCHINO Yuki
+    %   revised ... 2024-03-17 ... UCHINO Yuki
+    %   revised ... 2024-03-21 ... UCHINO Yuki
 
     %% Values of double-double
     properties (GetAccess = public, SetAccess = private)
@@ -92,6 +94,7 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
         ddpiby184320    = dd(1.7044230976507124e-05,2.8795432332716491e-22,"no");       % pi/180/1024
         dd2bysqrtpi     = dd(1.1283791670955126e+00,1.5335459613165881e-17,"no");       % 2/sqrt(pi)
         ddsqrt2bypi     = dd(7.9788456080286541e-01,-4.9846544045554601e-17,"no");      % sqrt(2/pi)
+        dd1024bypi      = dd(3.2594932345220167e+02,-2.0150964915386866e-14,"no");      % 1024/pi
         ddflintmax      = dd(8.1129638414606682e+31,0,"no");                            % 2^106
         ddrealmax       = dd(1.7976931348623157e+308,1.9958403095347196e+292,"no");     % 2^1024*(1-2^-106)
         ddrealmin       = dd(realmin,0,"no");                                           % 2^-1074
@@ -113,6 +116,7 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
         expfact_tab     = expfacttable;                                                 % table of 1/n! for n>=3
         logfact_tab     = logfacttable;                                                 % table of 1/(2n+1)/(2^(2n)) for n>=1
         erffact_tab     = erffacttable;                                                 % table of 2^n/(2*n+1)!! for n>=1
+        piby1024_tab    = piby1024table;                                                % table of pi/1024
     end
 
     %% Static mathods
@@ -217,6 +221,8 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
                     error('Arrays have incompatible sizes for dd.');
                 end
                 c.v2 = (da-c.v1) + db;
+                idx = isinf(c.v1);
+                c.v2(idx) = c.v1(idx);
             else
                 % [c.v1,c.v2] = TwoSum(double(a),double(b));
                 da = double(a);
@@ -228,6 +234,8 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
                 end
                 z = c.v1-da;
                 c.v2 = (da-(c.v1-z))+(db-z);
+                idx = isinf(c.v1);
+                c.v2(idx) = c.v1(idx);
             end
         end
 
