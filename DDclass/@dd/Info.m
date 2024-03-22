@@ -10,10 +10,11 @@ function Info
 %   revised ... 2024-03-17 ... UCHINO Yuki
 %   revised ... 2024-03-18 ... UCHINO Yuki
 %   revised ... 2024-03-21 ... UCHINO Yuki
+%   revised ... 2024-03-22 ... UCHINO Yuki
 fprintf('\n----------------------------------------------------\n');
 fprintf(' DDclass - A double-double class toolbox for MATLAB\n');
-fprintf(' Version : 1.2.0\n');
-fprintf(' Release : 2024-03-21\n');
+fprintf(' Version : 1.3.0\n');
+fprintf(' Release : 2024-03-22\n');
 fprintf(' (c) 2024 UCHINO Yuki\n');
 fprintf('----------------------------------------------------\n\n');
 end
