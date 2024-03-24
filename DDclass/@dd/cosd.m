@@ -9,6 +9,7 @@ function a = cosd(a)
 %   written ... 2024-02-23 ... UCHINO Yuki
 %   revised ... 2024-03-17 ... UCHINO Yuki
 %   revised ... 2024-03-21 ... UCHINO Yuki
+%   revised ... 2024-03-24 ... UCHINO Yuki
 
 %% the exception cases
 if isempty(a)
@@ -59,14 +60,34 @@ if rowflag
     r = r.';
 end
 
+if any(r.v2)
+    s1 = sind(dd(r.v1));
+    s2 = sind(dd(r.v2));
+    c1 = cosd(dd(r.v1));
+    c2 = cosd(dd(r.v2));
+    if anyflag
+        if rowflag
+            a(~finflag) = (c1 .* c2 - s1 .* s2).';
+        else
+            a(~finflag) = c1 .* c2 - s1 .* s2;
+        end
+    else
+        if rowflag
+            a = (c1 .* c2 - s1 .* s2).';
+        else
+            a = c1 .* c2 - s1 .* s2;
+        end
+    end
+    return;
+end
+
 % Argument reduction k*pi/1024 + r := a*pi/180
-failflag = any(abs(r.v1) > 377487360, 'all');
+if any(abs(r.v1) >= 4.4565841414273690e+29, 'all')
+    warning([mfilename ' for dd: Cannot guarantee the success of argument reduction.']);
+end
 r = ldexp(r,10);                        % r*1024
 k = round(r./180);                      % round(r/180)
 r = (r - 180.*k) .* dd.ddpiby184320;    % .* pi/1024/180
-if failflag || any(abs(r.v1)>=1.5339807878856414e-03,'all') 
-    warning([mfilename ' for dd: Cannot guarantee the success of argument reduction.']);
-end
 j1 = double(k-ldexp(floor(ldexp(k,-11)),11));   % j1 := mod(k,2048)
 j2 = mod(j1,1024);                              % j2 := mod(k,1024)
 
