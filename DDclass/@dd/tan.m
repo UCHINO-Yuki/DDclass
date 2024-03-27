@@ -12,6 +12,7 @@ function a = tan(a)
 %   revised ... 2024-03-17 ... UCHINO Yuki
 %   revised ... 2024-03-21 ... UCHINO Yuki
 %   revised ... 2024-03-24 ... UCHINO Yuki
+%   revised ... 2024-03-27 ... UCHINO Yuki
 
 %% the exception cases
 if isempty(a)
@@ -47,53 +48,56 @@ if rowflag
 end
 
 if any(r.v2)
-    s1 = sin(dd(r.v1));
-    s2 = sin(dd(r.v2));
-    c1 = cos(dd(r.v1));
-    c2 = cos(dd(r.v2));
-    c1 = (s1 .* c2 + c1 .* s2)./(c1 .* c2 - s1 .* s2);
+    t1 = tan(dd(r.v1));
+    t2 = tan(dd(r.v2));
+    t1 = (t1 + t2)./(1 - t1.*t2);
     if anyflag
         if rowflag
-            a(~finflag) = c1.';
+            a(~finflag) = t1.';
         else
-            a(~finflag) = c1;
+            a(~finflag) = t1;
         end
     else
         if rowflag
-            a = c1.';
+            a = t1.';
         else
-            a = c1;
+            a = t1;
         end
     end
     return;
 end
 
 % Argument reduction k*pi/1024 + r := a
-if any(abs(r.v1) > 2.4890261331223109e+29,'all')
-    warning([mfilename ' for dd: Cannot guarantee the success of argument reduction.']);
+huge = abs(r.v1) > 2.4890261331223109e+29;
+hugeflag = any(huge,'all');
+if hugeflag
+    r(huge) = hugetrig(r.v1(huge),'tan');
+    rtmp = r(~huge);
+else
+    rtmp = r;
 end
-k = round(r .* dd.dd1024bypi);
+k = round(rtmp .* dd.dd1024bypi);
 if issparse(k)
     for i=1:5
         [j1,j2] = TwoProd(k.v1,dd.piby1024_tab(i));    % k*pi/1024
-        rr = r - dd(j1,j2,"no");
+        rr = rtmp - dd(j1,j2,"no");
         [j1,j2] = TwoProd(k.v2,dd.piby1024_tab(i));
         rr = rr - dd(j1,j2,"no");
-        if all(r.v1==rr.v1,'all') && all(r.v2==rr.v2,'all')
+        if all(rtmp.v1==rr.v1,'all') && all(rtmp.v2==rr.v2,'all')
             break;
         end
-        r = rr;
+        rtmp = rr;
     end
 else
     for i=1:5
         [j1,j2] = TwoProdFMA(k.v1,dd.piby1024_tab(i));    % k*pi/1024
-        rr = r - dd(j1,j2,"no");
+        rr = rtmp - dd(j1,j2,"no");
         [j1,j2] = TwoProdFMA(k.v2,dd.piby1024_tab(i));
         rr = rr - dd(j1,j2,"no");
-        if all(r.v1==rr.v1,'all') && all(r.v2==rr.v2,'all')
+        if all(rtmp.v1==rr.v1,'all') && all(rtmp.v2==rr.v2,'all')
             break;
         end
-        r = rr;
+        rtmp = rr;
     end
 end
 j1 = double(k-ldexp(floor(ldexp(k,-11)),11));   % j1 := mod(k,2048)
@@ -111,12 +115,12 @@ idx = (j2>=512).*(1024-j2) + (j2<512).*j2 + 1;
 cosk = sgn.*dd.cos_tab(idx);
 
 % sinr := sin(r)
-r2 = r.*r;
+r2 = rtmp.*rtmp;
 sinr = r2.*dd.sinfact_tab.v1(4);
 sinr = r2.*(sinr+dd.sinfact_tab.v1(3));
 sinr = r2.*(sinr+dd.sinfact_tab(2));
 sinr = r2.*(sinr+dd.sinfact_tab(1));
-sinr = r + r.*sinr;
+sinr = rtmp + rtmp.*sinr;
 
 % cosr := cos(r)
 cosr = r2.*dd.cosfact_tab.v1(3);
@@ -129,17 +133,23 @@ cosr = 1 + ldexp(-r2,-1) + r2.*cosr;
 % cos(a) := cosk.*cosr - sink.*sinr
 j1 = sink.*cosr + cosk.*sinr;
 j2 = cosk.*cosr - sink.*sinr;
+if hugeflag
+    r(~huge) = j1./j2;
+else
+    r = j1./j2;
+end
+
 if anyflag
     if rowflag
-        a(~finflag) = (j1./j2).';
+        a(~finflag) = r.';
     else
-        a(~finflag) = j1./j2;
+        a(~finflag) = r;
     end
 else
     if rowflag
-        a = (j1./j2).';
+        a = r.';
     else
-        a = j1./j2;
+        a = r;
     end
 end
 end

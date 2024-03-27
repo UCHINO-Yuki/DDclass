@@ -117,6 +117,7 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
         logfact_tab     = logfacttable;                                                 % table of 1/(2n+1)/(2^(2n)) for n>=1
         erffact_tab     = erffacttable;                                                 % table of 2^n/(2*n+1)!! for n>=1
         piby1024_tab    = piby1024table;                                                % table of pi/1024
+        invpi_bits      = invpi_1200bits;                                               % 1200 bits of 2/pi * 2^1200
     end
 
     %% Static mathods

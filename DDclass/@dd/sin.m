@@ -10,6 +10,7 @@ function a = sin(a)
 %   revised ... 2024-03-17 ... UCHINO Yuki
 %   revised ... 2024-03-21 ... UCHINO Yuki
 %   revised ... 2024-03-24 ... UCHINO Yuki
+%   revised ... 2024-03-27 ... UCHINO Yuki
 
 %% the exception cases
 if isempty(a)
@@ -66,31 +67,36 @@ if any(r.v2)
 end
 
 % Argument reduction k*pi/1024 + r := a
-if any(abs(r.v1) > 2.4890261331223109e+29,'all')
-    warning([mfilename ' for dd: Cannot guarantee the success of argument reduction.']);
+huge = abs(r.v1) > 2.4890261331223109e+29;
+hugeflag = any(huge,'all');
+if hugeflag
+    r(huge) = hugetrig(r.v1(huge),'sin');
+    rtmp = r(~huge);
+else
+    rtmp = r;
 end
-k = round(r .* dd.dd1024bypi);
+k = round(rtmp .* dd.dd1024bypi);
 if issparse(k)
     for i=1:5
         [j1,j2] = TwoProd(k.v1,dd.piby1024_tab(i));    % k*pi/1024
-        rr = r - dd(j1,j2,"no");
+        rr = rtmp - dd(j1,j2,"no");
         [j1,j2] = TwoProd(k.v2,dd.piby1024_tab(i));
         rr = rr - dd(j1,j2,"no");
-        if all(r.v1==rr.v1,'all') && all(r.v2==rr.v2,'all')
+        if all(rtmp.v1==rr.v1,'all') && all(rtmp.v2==rr.v2,'all')
             break;
         end
-        r = rr;
+        rtmp = rr;
     end
 else
     for i=1:5
         [j1,j2] = TwoProdFMA(k.v1,dd.piby1024_tab(i));    % k*pi/1024
-        rr = r - dd(j1,j2,"no");
+        rr = rtmp - dd(j1,j2,"no");
         [j1,j2] = TwoProdFMA(k.v2,dd.piby1024_tab(i));
         rr = rr - dd(j1,j2,"no");
-        if all(r.v1==rr.v1,'all') && all(r.v2==rr.v2,'all')
+        if all(rtmp.v1==rr.v1,'all') && all(rtmp.v2==rr.v2,'all')
             break;
         end
-        r = rr;
+        rtmp = rr;
     end
 end
 j1 = double(k-ldexp(floor(ldexp(k,-11)),11));   % j1 := mod(k,2048)
@@ -108,12 +114,12 @@ idx = (j2>=512).*(1024-j2) + (j2<512).*j2 + 1;
 cosk = sgn.*dd.cos_tab(idx);
 
 % sinr := sin(r)
-r2 = r.*r;
+r2 = rtmp.*rtmp;
 sinr = r2.*dd.sinfact_tab.v1(4);
 sinr = r2.*(sinr+dd.sinfact_tab.v1(3));
 sinr = r2.*(sinr+dd.sinfact_tab(2));
 sinr = r2.*(sinr+dd.sinfact_tab(1));
-sinr = r + r.*sinr;
+sinr = rtmp + rtmp.*sinr;
 
 % cosr := cos(r)
 cosr = r2.*dd.cosfact_tab.v1(3);
@@ -122,17 +128,23 @@ cosr = r2.*(cosr+dd.cosfact_tab(1));
 cosr = 1 + ldexp(-r2,-1) + r2.*cosr;
 
 % sin(a) := sink.*cosr + cosk.*sinr
+if hugeflag
+    r(~huge) = sink.*cosr + cosk.*sinr;
+else
+    r = sink.*cosr + cosk.*sinr;
+end
+
 if anyflag
     if rowflag
-        a(~finflag) = (sink.*cosr + cosk.*sinr).';
+        a(~finflag) = r.';
     else
-        a(~finflag) = sink.*cosr + cosk.*sinr;
+        a(~finflag) = r;
     end
 else
     if rowflag
-        a = (sink.*cosr + cosk.*sinr).';
+        a = r.';
     else
-        a = sink.*cosr + cosk.*sinr;
+        a = r;
     end
 end
 end

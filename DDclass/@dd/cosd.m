@@ -10,6 +10,7 @@ function a = cosd(a)
 %   revised ... 2024-03-17 ... UCHINO Yuki
 %   revised ... 2024-03-21 ... UCHINO Yuki
 %   revised ... 2024-03-24 ... UCHINO Yuki
+%   revised ... 2024-03-27 ... UCHINO Yuki
 
 %% the exception cases
 if isempty(a)
@@ -21,7 +22,7 @@ finflag = isnan(a.v1);
 
 % if a = 90*n with odd n, return 0
 n = floor(a./90);
-i = (a==n.*90) & (n-ldexp_(floor(ldexp_(n,0.5)),2)==1) & ~finflag;
+i = (abs(a.v1) < 4.4565841414273690e+29) & (a==n.*90) & (n-ldexp_(floor(ldexp_(n,0.5)),2)==1) & ~finflag;
 if any(i,'all')
     a.v1(i) = 0;
     a.v2(i) = 0;

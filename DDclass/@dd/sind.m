@@ -10,6 +10,7 @@ function a = sind(a)
 %   revised ... 2024-03-17 ... UCHINO Yuki
 %   revised ... 2024-03-21 ... UCHINO Yuki
 %   revised ... 2024-03-24 ... UCHINO Yuki
+%   revised ... 2024-03-27 ... UCHINO Yuki
 
 %% the exception cases
 if isempty(a)
@@ -20,7 +21,7 @@ end
 finflag = isnan(a.v1);
 
 % if a = 180*n, return 0
-i = (a==floor(a./180).*180) & ~finflag;
+i = (abs(a.v1) < 4.4565841414273690e+29) & (a==floor(a./180).*180) & ~finflag;
 if any(i,'all')
     a.v1(i) = 0;
     a.v2(i) = 0;

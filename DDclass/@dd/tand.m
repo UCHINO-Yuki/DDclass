@@ -12,6 +12,7 @@ function a = tand(a)
 %   revised ... 2024-03-17 ... UCHINO Yuki
 %   revised ... 2024-03-21 ... UCHINO Yuki
 %   revised ... 2024-03-24 ... UCHINO Yuki
+%   revised ... 2024-03-27 ... UCHINO Yuki
 
 %% the exception cases
 if isempty(a)
@@ -31,7 +32,7 @@ end
 
 % if a = 90*n with odd n, return +-inf
 n = floor(a./90);
-i = (a==n.*90) & ~finflag;
+i = (abs(a.v1) < 4.4565841414273690e+29) & (a==n.*90) & ~finflag;
 n =  n-ldexp_(floor(ldexp_(n,0.25)),4); % mod(n,4)
 j = i & n==1;
 if any(j,'all')
