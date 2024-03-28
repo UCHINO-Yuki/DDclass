@@ -17,7 +17,7 @@ The following functions and operations are implemented using mixed-precision alg
 
 ## System requirements
 
-MATLAB R2021b or later is required.
+MATLAB R2022a or later is required.
 
 "Fixed-Point Designer" toolbox is required (for `fma`).
 
