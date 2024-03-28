@@ -11,6 +11,7 @@ function a = cos(a)
 %   revised ... 2024-03-21 ... UCHINO Yuki
 %   revised ... 2024-03-24 ... UCHINO Yuki
 %   revised ... 2024-03-27 ... UCHINO Yuki
+%   revised ... 2024-03-28 ... UCHINO Yuki
 
 %% the exception cases
 if isempty(a)
@@ -75,35 +76,29 @@ end
 
 % Argument reduction k*pi/1024 + r := a
 huge = abs(r.v1) > 2.4890261331223109e+29;
-hugeflag = any(huge,'all');
-if hugeflag
-    r(huge) = hugetrig(r.v1(huge),'cos');
-    rtmp = r(~huge);
-else
-    rtmp = r;
-end
-k = round(rtmp .* dd.dd1024bypi);
+r(huge) = reduction(r.v1(huge),'cos');
+k = round(r .* dd.dd1024bypi);
 if issparse(k)
     for i=1:5
         [j1,j2] = TwoProd(k.v1,dd.piby1024_tab(i));    % k*pi/1024
-        rr = rtmp - dd(j1,j2,"no");
+        rr = r - dd(j1,j2,"no");
         [j1,j2] = TwoProd(k.v2,dd.piby1024_tab(i));
         rr = rr - dd(j1,j2,"no");
-        if all(rtmp.v1==rr.v1,'all') && all(rtmp.v2==rr.v2,'all')
+        if all(r.v1==rr.v1,'all') && all(r.v2==rr.v2,'all')
             break;
         end
-        rtmp = rr;
+        r = rr;
     end
 else
     for i=1:5
         [j1,j2] = TwoProdFMA(k.v1,dd.piby1024_tab(i));    % k*pi/1024
-        rr = rtmp - dd(j1,j2,"no");
+        rr = r - dd(j1,j2,"no");
         [j1,j2] = TwoProdFMA(k.v2,dd.piby1024_tab(i));
         rr = rr - dd(j1,j2,"no");
-        if all(rtmp.v1==rr.v1,'all') && all(rtmp.v2==rr.v2,'all')
+        if all(r.v1==rr.v1,'all') && all(r.v2==rr.v2,'all')
             break;
         end
-        rtmp = rr;
+        r = rr;
     end
 end
 j1 = double(k-ldexp(floor(ldexp(k,-11)),11));   % j1 := mod(k,2048)
@@ -121,12 +116,12 @@ idx = (j2>=512).*(1024-j2) + (j2<512).*j2 + 1;
 cosk = sgn.*dd.cos_tab(idx);
 
 % sinr := sin(r)
-r2 = rtmp.*rtmp;
+r2 = r.*r;
 sinr = r2.*dd.sinfact_tab.v1(4);
 sinr = r2.*(sinr+dd.sinfact_tab.v1(3));
 sinr = r2.*(sinr+dd.sinfact_tab(2));
 sinr = r2.*(sinr+dd.sinfact_tab(1));
-sinr = rtmp + rtmp.*sinr;
+sinr = r + r.*sinr;
 
 % cosr := cos(r)
 cosr = r2.*dd.cosfact_tab.v1(3);
@@ -135,11 +130,7 @@ cosr = r2.*(cosr+dd.cosfact_tab(1));
 cosr = 1 + ldexp(-r2,-1) + r2.*cosr;
 
 % cos(a) := cosk.*cosr - sink.*sinr
-if hugeflag
-    r(~huge) = cosk.*cosr - sink.*sinr;
-else
-    r = cosk.*cosr - sink.*sinr;
-end
+r = cosk.*cosr - sink.*sinr;
 
 if anyflag
     if rowflag

@@ -76,6 +76,7 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     %   revised ... 2024-03-06 ... UCHINO Yuki
     %   revised ... 2024-03-17 ... UCHINO Yuki
     %   revised ... 2024-03-21 ... UCHINO Yuki
+    %   revised ... 2024-03-28 ... UCHINO Yuki
 
     %% Values of double-double
     properties (GetAccess = public, SetAccess = private)
@@ -117,7 +118,7 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
         logfact_tab     = logfacttable;                                                 % table of 1/(2n+1)/(2^(2n)) for n>=1
         erffact_tab     = erffacttable;                                                 % table of 2^n/(2*n+1)!! for n>=1
         piby1024_tab    = piby1024table;                                                % table of pi/1024
-        invpi_bits      = invpi_1200bits;                                               % 1200 bits of 2/pi * 2^1200
+        invpi_bits      = invpi_1213bits;                                               % 1213 bits of 2/pi * 2^1213
     end
 
     %% Static mathods
@@ -320,6 +321,7 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
         %% Rounding
         c = ceil(a)
         c = floor(a)
+        c = fix(a)
         c = round(a,varargin)
 
         %% Basic operations
