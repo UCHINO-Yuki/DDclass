@@ -4,9 +4,10 @@ function a = parenDelete(a,indexOp)
 %   See also PARENDELETE
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
+%   revised ... 2024-03-30 ... UCHINO Yuki
 
 arguments (Input)
-    a DD
+    a dd
     indexOp (1,1) matlab.indexing.IndexingOperation
 end
 
