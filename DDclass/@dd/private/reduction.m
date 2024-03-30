@@ -3,12 +3,13 @@ function b = reduction(a,trig)
 %
 %   written ... 2024-03-27 ... UCHINO Yuki
 %   revised ... 2024-03-28 ... UCHINO Yuki
+%   revised ... 2024-03-30 ... UCHINO Yuki
 
 % a =: N * 2^M with odd integer N
 % a =: x1 + x2 + x3
 ufpa = floor(log2(abs(a)));     % ufp(abs(a))
 M = 53-ufpa;                    % exponent of shift value 2^M
-b = pow2(a,M);                  % shift a.v1
+b = pow2(a,M);                  % b := a * 2^M
 i64 = int64(abs(b));            % convert into uint64
 x = cell(1,3);
 x{1} = double(single(b));       % first 24 bits of a.v1
@@ -25,16 +26,18 @@ end
 % 2/pi
 tmp = repmat(dd.invpi_bits,size(M));
 invpi = cell(1,8);
-j=1;
-P = M;
+j = 1;
+p = 0;
+M = M-2;
 while true
-    tmp1 = extractBefore(extractAfter(tmp,P-2),25);
-    invpi{j} = pow2(bin2dec(tmp1),-24*(j-1));
+    tmp1 = extractBefore(extractAfter(tmp,M),25);
+    invpi{j} = pow2(bin2dec(tmp1),p);
     j=j+1;
     if j>8
         break;
     end
-    P = P+24;
+    p = p-24;
+    M = M+24;
 end
 
 % x * invpi
