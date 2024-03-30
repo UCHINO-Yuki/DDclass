@@ -5,6 +5,7 @@ function a = cot(a)
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
 %   revised ... 2024-03-17 ... UCHINO Yuki
+%   revised ... 2024-03-30 ... UCHINO Yuki
 
 %% the exception cases
 if isempty(a)
@@ -46,24 +47,55 @@ if rowflag
     r = r.';
 end
 
-% Argument reduction k*pi/1024 + r := a
-invpi = 3.2594932345220167e+02;                     % 1024/pi
-k = round(r.v1 .* invpi);
-if issparse(k)
-    [j1,j2] = TwoProd(k,3.0679615757712823e-03);    % k*pi/1024
-    r = r - dd(j1,j2,"no");
-    [j1,j2] = TwoProd(k,1.1959441397923371e-19);
-    r = r - dd(j1,j2,"no");
-    r = r + k.*2.9245798923030661e-36;
-else
-    [j1,j2] = TwoProdFMA(k,3.0679615757712823e-03);
-    r = r - dd(j1,j2,"no");
-    [j1,j2] = TwoProdFMA(k,1.1959441397923371e-19);
-    r = r - dd(j1,j2,"no");
-    r = r + k.*2.9245798923030661e-36;
+if any(r.v2)
+    t1 = tan(dd(r.v1));
+    t2 = tan(dd(r.v2));
+    t1 = (1 - t1.*t2)./(t1 + t2);
+    if anyflag
+        if rowflag
+            a(~finflag) = t1.';
+        else
+            a(~finflag) = t1;
+        end
+    else
+        if rowflag
+            a = t1.';
+        else
+            a = t1;
+        end
+    end
+    return;
 end
-j1 = k-pow2(floor(pow2(k,-11)),11);             % j1 = mod(k,2048)
-j2 = k-pow2(floor(pow2(k,-10)),10);             % j2 = mod(k,1024)
+
+% Argument reduction k*pi/1024 + r := a
+huge = abs(r.v1) > 2.4890261331223109e+29;
+r(huge) = reduction(r.v1(huge),'tan');
+k = round(r .* dd.dd1024bypi);
+if issparse(k)
+    for i=1:5
+        [j1,j2] = TwoProd(k.v1,dd.piby1024_tab(i));    % k*pi/1024
+        rr = r - dd(j1,j2,"no");
+        [j1,j2] = TwoProd(k.v2,dd.piby1024_tab(i));
+        rr = rr - dd(j1,j2,"no");
+        if all(r.v1==rr.v1,'all') && all(r.v2==rr.v2,'all')
+            break;
+        end
+        r = rr;
+    end
+else
+    for i=1:5
+        [j1,j2] = TwoProdFMA(k.v1,dd.piby1024_tab(i));    % k*pi/1024
+        rr = r - dd(j1,j2,"no");
+        [j1,j2] = TwoProdFMA(k.v2,dd.piby1024_tab(i));
+        rr = rr - dd(j1,j2,"no");
+        if all(r.v1==rr.v1,'all') && all(r.v2==rr.v2,'all')
+            break;
+        end
+        r = rr;
+    end
+end
+j1 = double(k-ldexp(floor(ldexp(k,-11)),11));   % j1 := mod(k,2048)
+j2 = mod(j1,1024);                              % j2 := mod(k,1024)
 
 % sink := sin(k.*pi/1024) using table
 sgn = -1.*(j1>1024)+(j1<=1024);
@@ -90,22 +122,24 @@ cosr = r2.*(cosr+dd.cosfact_tab.v1(2));
 cosr = r2.*(cosr+dd.cosfact_tab(1));
 cosr = 1 + ldexp(-r2,-1) + r2.*cosr;
 
-% cot(a) := cos(a)./sin(a)
+% tan(a) := sin(a)./cos(a)
 % sin(a) := sink.*cosr + cosk.*sinr
 % cos(a) := cosk.*cosr - sink.*sinr
 j1 = sink.*cosr + cosk.*sinr;
 j2 = cosk.*cosr - sink.*sinr;
+r = j2./j1;
+
 if anyflag
     if rowflag
-        a(~finflag) = (j2./j1).';
+        a(~finflag) = r.';
     else
-        a(~finflag) = j2./j1;
+        a(~finflag) = r;
     end
 else
     if rowflag
-        a = (j2./j1).';
+        a = r.';
     else
-        a = j2./j1;
+        a = r;
     end
 end
 end

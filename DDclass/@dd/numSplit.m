@@ -9,15 +9,16 @@ function out = numSplit(k)
 %   k_old = dd.numSplit         returns the current value.
 %   k_old = dd.numSplit(k_new)  sets new value and returns the current value.
 %
-%   The input argument must be real integer scalar.
+%   The input argument must be real positive integer scalar.
 %
 %   See also DD
 %
 %   written ... 2024-02-25 ... UCHINO Yuki
 %   revised ... 2024-03-05 ... UCHINO Yuki
+%   revised ... 2024-03-30 ... UCHINO Yuki
 
 arguments (Input)
-    k double {mustBeScalarOrEmpty,mustBeInteger} = []
+    k double {mustBeScalarOrEmpty,mustBeInteger,mustBePositive} = []
 end
 persistent Var;
 if isempty(Var)
