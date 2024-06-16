@@ -5,6 +5,7 @@ function N = norm(a,p)
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
 %   revised ... 2024-03-06 ... UCHINO Yuki
+%   revised ... 2024-06-13 ... UCHINO Yuki
 
 arguments (Input)
     a dd
@@ -47,8 +48,9 @@ switch p
         k = i(1);
         N = dd(v.v1(k),v.v2(k),"no");
     case 2
-        s = svd(a,'vector');
-        N = max(s(1),s(end));
+        N = normest(a);
+        % s = svd(a,'vector');
+        % N = max(s(1),s(end));
     case Inf
         a = abs(a);
         v = sum(a,2);

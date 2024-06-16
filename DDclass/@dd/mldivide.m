@@ -5,6 +5,7 @@ function c = mldivide(a,b)
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
 %   revised ... 2024-03-05 ... UCHINO Yuki
+%   revised ... 2024-06-16 ... UCHINO Yuki
 
 arguments (Input)
     a (:,:) dd
@@ -34,7 +35,7 @@ if szA(1) ~= szA(2)
     ab = a'*b;
 
     % initial guess
-    c1 = dd(aa.v1\ab.v1);   % solve a*x = b
+    c1 = dd(a.v1\b.v1);   % solve a*x = b
 
     % residual iter.
     for i=1:10
@@ -47,6 +48,7 @@ if szA(1) ~= szA(2)
         c1 = c;
     end
 
+    return;
 end
 
 % solve a*x = b
