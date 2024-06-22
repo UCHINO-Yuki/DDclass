@@ -6,6 +6,7 @@ function c = mldivide(a,b)
 %   written ... 2024-02-23 ... UCHINO Yuki
 %   revised ... 2024-03-05 ... UCHINO Yuki
 %   revised ... 2024-06-16 ... UCHINO Yuki
+%   revised ... 2024-06-22 ... UCHINO Yuki
 
 arguments (Input)
     a (:,:) dd
@@ -31,24 +32,10 @@ end
 
 if szA(1) ~= szA(2)
     % solve least square problem
-    aa = a'*a;
-    ab = a'*b;
 
-    % initial guess
-    c1 = dd(a.v1\b.v1);   % solve a*x = b
-
-    % residual iter.
-    for i=1:10
-        r = ab-aa*c1;           % residual
-        y = aa.v1\r.v1;         % solve a*y = r
-        c = c1+y;               % update x
-        if all(c.v1==c1.v1,'all') && all(c.v2==c1.v2,'all')
-            return;             % converged
-        end
-        c1 = c;
-    end
-
-    return;
+    % qr decomposition using dd
+    [q,a] = qr(a,'econ');
+    b = q'*b;  
 end
 
 % solve a*x = b

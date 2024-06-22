@@ -77,6 +77,7 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     %   revised ... 2024-03-17 ... UCHINO Yuki
     %   revised ... 2024-03-21 ... UCHINO Yuki
     %   revised ... 2024-03-28 ... UCHINO Yuki
+    %   revised ... 2024-06-22 ... UCHINO Yuki
 
     %% Values of double-double
     properties (GetAccess = public, SetAccess = private)
@@ -413,6 +414,7 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
         [N,cnt] = normest(a,tol)
         [out1,out2,out3] = eig(a,in2,in3)
         [out1,out2,out3] = svd(a,in2,in3)
+        varargout = qr(a,in2)
     end
 
     %% private methods for indexing & display
