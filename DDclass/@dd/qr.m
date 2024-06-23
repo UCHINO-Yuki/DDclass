@@ -8,6 +8,7 @@ function varargout = qr(a,in2)
 %   See also QR
 %
 %   written ... 2024-06-22 ... UCHINO Yuki
+%   revised ... 2024-06-23 ... UCHINO Yuki
 
 arguments (Input)
     a (:,:) dd
@@ -68,11 +69,15 @@ q = q - 0.5 * q.v1 * e.v1;
 
 if isempty(in2)
     varargout{idxQ} = q;
-    varargout{idxR} = q'*a;
+    if MN(2)<MN(1)
+        varargout{idxR} = [triu(q(:,1:MN(2))'*a); zeros(MN(1)-MN(2))];
+    else
+        varargout{idxR} = triu(q'*a);
+    end
 else
     minMN = min(MN);
     varargout{idxQ} = q(1:MN(1),1:minMN);
-    varargout{idxR} = varargout{idxQ}'*a(:,1:MN(2));
+    varargout{idxR} = triu(varargout{idxQ}'*a(:,1:MN(2)));
 end
 
 end
