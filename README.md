@@ -21,7 +21,7 @@ MATLAB R2022a or later is required.
 
 "Fixed-Point Designer" toolbox is required (for `fma`).
 
-In addition, to use gpuArray, "Parallel Computing Toolbox" toolbox is required.
+[Option] To use gpuArray, "Parallel Computing Toolbox" toolbox is required.
 
 ## Installation
 
