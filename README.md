@@ -23,12 +23,18 @@ MATLAB R2022a or later is required.
 
 [Option] To use gpuArray, "Parallel Computing Toolbox" toolbox is required.
 
+[Option] To use gpuArray, [the NVIDIA CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit) is required to compile `*.cuda` files.
+
 ## Installation
 
 1. Change the current folder to "DDclass".
 2. Execute the following command to add the toolbox path to MATLAB's search path and compile the cu file.
 ```
 startDD;
+```
+If cuda compiler failed, try the following command and then recompile.
+```
+setenv("NVCC_APPEND_FLAGS", '-allow-unsupported-compiler');
 ```
 3. You can also permanently save the search path by using the `pathtool` command and clicking "save".
 
