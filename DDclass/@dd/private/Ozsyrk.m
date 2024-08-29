@@ -1,7 +1,7 @@
 function C = Ozsyrk(rA,rA2)
 % OZSYRK    Higher-precision matrix multiplication using dsyrk
 %
-%   based on the following:
+%   based on the followings:
 %       K. Ozaki, et al.:
 %       Error-free transformations of matrix multiplication by using fast
 %       routines of matrix multiplication and its applications, 
@@ -9,7 +9,7 @@ function C = Ozsyrk(rA,rA2)
 %
 %       Y. Uchino and K. Ozaki:
 %       Fast and accurate symmetric rank-k operation,
-%       in The 42th JSST Annual Conference International Conference on
+%       in The 42nd JSST Annual Conference International Conference on
 %       Simulation Technology (2023)
 %
 %   written ... 2024-02-23 ... UCHINO Yuki
@@ -28,13 +28,13 @@ if isinf(n_split)
         for p=1:nA
             for q=1:qmax
                 if p+q == i
-                    E = rA{p}'*rA{q};
+                    E = rA{p}.'*rA{q};
                     D = D+(dd(E) + E.');
                 end
             end
         end
         if mod(i,2)==0
-            D = D+rA{i/2}'*rA{i/2};
+            D = D+rA{i/2}.'*rA{i/2};
         end
         C = C+D;
     end
@@ -55,7 +55,7 @@ for i=3:min(2*nA,n_split)
         end
     end
     if mod(i,2)==0
-        D = D+rA{i/2}'*rA{i/2};
+        D = D+rA{i/2}.'*rA{i/2};
     end
     C = C+D;
 end
@@ -69,19 +69,24 @@ for p = i:nA
         continue;
     end
     E = E+rA{q};
-    D = rA{p}'*E;
+    D = rA{p}.'*E;
     C = C+D;
     C = C+D';
 end
 
 %% big square part
 if n_split==2
-    C = C+rA{2}'*rA{2};
+    if nA>=2
+        C = C+rA{2}.'*rA{2};
+    end
 else
     i = floor(n_split/2)+1;
     if i <= nA
-        C = C+rA2{i}'*rA2{i};
+        C = C+rA2{i}.'*rA2{i};
     end
 end
+
+C.v1 = (C.v1 + C.v1.').*0.5;
+C.v2 = (C.v2 + C.v2.').*0.5;
 
 end

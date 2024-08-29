@@ -9,7 +9,7 @@ if issparse(a1) || issparse(a2)
     [c1,c2] = FastTwoSum(c1,c2);
 else
     [c1,c2] = TwoProdFMA(a1,a1);
-    c2 = FMA(2.*a1,a2,c2);
+    c2 = c2 + 2.*a1.*a2;
     [c1,c2] = FastTwoSum(c1,c2);
 end
 end

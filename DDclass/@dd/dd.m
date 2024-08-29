@@ -16,6 +16,8 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     %
     %       * startDD       sets the DDclass path and (re-)compiles mexcuda.
     %
+    %       * ver('DDclass') returns version infomation.
+    %
     %   High and low order parts of a DD number D can be references 
     %   by using dotReference:
     %
@@ -78,6 +80,7 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     %   revised ... 2024-03-21 ... UCHINO Yuki
     %   revised ... 2024-03-28 ... UCHINO Yuki
     %   revised ... 2024-06-22 ... UCHINO Yuki
+    %   revised ... 2024-08-29 ... UCHINO Yuki
 
     %% Values of double-double
     properties (GetAccess = public, SetAccess = private)

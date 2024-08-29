@@ -46,7 +46,7 @@ while any(A1,'all')
     rA2{i} = A1;
     x = vecnorm(A1,2,dim);
     mu = (((x./s2).*s3)./s1).*s3;
-    t = pow2(0.75,nextpow2(mu)+q);
+    t = pow2(0.75,nextpow2(mu)+q);% 0.75 * 2^(nextpow2(mu)+q-1)
     rA{i} = (A1+t)-t;
     A1 = A1-rA{i};
     [A1,A2] = FastTwoSum(A1,A2);

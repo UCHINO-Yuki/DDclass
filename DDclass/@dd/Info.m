@@ -20,10 +20,13 @@ function Info
 %   revised ... 2024-06-23 ... UCHINO Yuki
 %   revised ... 2024-07-25 ... UCHINO Yuki
 %   revised ... 2024-08-09 ... UCHINO Yuki
+%   revised ... 2024-08-29 ... UCHINO Yuki
+
+v = ver('DDclass');
 fprintf('\n----------------------------------------------------\n');
-fprintf(' DDclass - A double-double class toolbox for MATLAB\n');
-fprintf(' Version : 1.10.2\n');
-fprintf(' Release : 2024-08-09\n');
-fprintf(' (c) 2024 UCHINO Yuki\n');
+fprintf(' DDclass - %s\n',v.Name);
+fprintf(' Version : %s\n',v.Version);
+fprintf(' Date    : %s\n',v.Date);
+fprintf(' (c) %s UCHINO Yuki\n',v.Date(end-3:end));
 fprintf('----------------------------------------------------\n\n');
 end
