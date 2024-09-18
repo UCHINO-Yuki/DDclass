@@ -7,6 +7,7 @@ function c = mldivide(a,b)
 %   revised ... 2024-03-05 ... UCHINO Yuki
 %   revised ... 2024-06-16 ... UCHINO Yuki
 %   revised ... 2024-06-22 ... UCHINO Yuki
+%   revised ... 2024-08-30 ... UCHINO Yuki
 
 arguments (Input)
     a (:,:) dd
@@ -43,6 +44,7 @@ end
 c1 = dd(a.v1\b.v1);  % solve a*x = b
 
 % residual iter.
+s = warning('off');
 for i=1:10
     r = b-a*c1;             % residual
     y = a.v1\r.v1;          % solve a*y = r
@@ -52,5 +54,6 @@ for i=1:10
     end
     c1 = c;
 end
+warning(s);
 
 end

@@ -1,4 +1,4 @@
-function n = parenListLength(a,indexOp,indexContext)
+function n = parenListLength(~,~,~)
 % PARENLISTLENGTH   Number of values to return from indexing operation
 %
 %   See also PARENLISTLENGTH

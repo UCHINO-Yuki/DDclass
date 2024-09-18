@@ -16,7 +16,7 @@ catch
     error('Invalid input.');
 end
 if ~isreal(b) || ~isUnderlyingType(b,'double')
-    error('invalid input');
+    error('Invalid input');
 end
 out = dd(b,b,"no");
 end

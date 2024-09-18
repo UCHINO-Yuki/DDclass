@@ -1,4 +1,4 @@
-function n = dotListLength(a,indexOp,indexContext)
+function n = dotListLength(~,~,~)
 % DOTLISTLENGTH  Number of values to return from indexing operation.
 %   
 %   written ... 2024-02-23 ... UCHINO Yuki

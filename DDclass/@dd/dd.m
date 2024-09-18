@@ -1,6 +1,7 @@
 classdef (InferiorClasses = {?mp,?sym}) dd ...
         < matlab.mixin.indexing.RedefinesParen ...
         & matlab.mixin.indexing.RedefinesDot ...
+        & matlab.mixin.indexing.RedefinesBrace ...
         & matlab.mixin.CustomDisplay
     % DD  class definition of double-double (DD) numbers
     %   
@@ -19,10 +20,11 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     %       * ver('DDclass') returns version infomation.
     %
     %   High and low order parts of a DD number D can be references 
-    %   by using dotReference:
+    %   by using dotReference or braceReference:
     %
-    %       * D1 = D.v1 returns high order part of D
-    %       * D2 = D.v2 returns low order part of D
+    %       * D1 = D.v1 or D{1} returns high order part of D
+    %       * D2 = D.v2 or D{2} returns low order part of D
+    %       * D{:}              returns high and low order part of D
     %
     %   double() also returns high and low order parts of a DD number D:
     %
@@ -81,6 +83,7 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
     %   revised ... 2024-03-28 ... UCHINO Yuki
     %   revised ... 2024-06-22 ... UCHINO Yuki
     %   revised ... 2024-08-29 ... UCHINO Yuki
+    %   revised ... 2024-09-18 ... UCHINO Yuki
 
     %% Values of double-double
     properties (GetAccess = public, SetAccess = private)
@@ -425,10 +428,13 @@ classdef (InferiorClasses = {?mp,?sym}) dd ...
         a = parenAssign(a,indexOp,b)                % a(_) = b
         a = parenDelete(a,indexOp)                  % a(_) = []
         c = parenReference(a,indexOp)               % c = a(_)
-        n = parenListLength(a,indexOp,indexContext) % #outputs for parenReference
+        n = parenListLength(~,~,~)                  % #outputs for parenReference
         a = dotAssign(a,indexOp,varargin)           % a._ = varargin{:} (Not supported)
-        varargout = dotReference(a,indexOp)         % c = a._
-        n = dotListLength(a,indexOp,indexContext)   % #outputs for braceReference
+        c = dotReference(a,indexOp)                 % c = a._
+        n = dotListLength(~,~,~)                    % #outputs for dotReference
+        varargout = braceReference(a,indexOp)       % c = a{_}(_)
+        a = braceAssign(a,indexOp,b)                % a{_} = b
+        n = braceListLength(~,indexOp,~)            % #outputs for braceReference
         out = getHeader(obj)                        % display header
         out = getFooter(obj)                        % display footer
         out = getPropertyGroups(~)                  % display properties

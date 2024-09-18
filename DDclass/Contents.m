@@ -1,5 +1,5 @@
 % A double-double class toolbox for MATLAB
-% Version 1.11.0 29-Aug-2024
+% Version 1.12.0 18-Sep-2024
 %
 %   The following special functions are provided:
 %
@@ -13,11 +13,13 @@
 %
 %       * startDD       sets the DDclass path and (re-)compiles mexcuda.
 %
-%   High and low order parts of a DD number D can be references
-%   by using dotReference:
 %
-%       * D1 = D.v1 returns high order part of D
-%       * D2 = D.v2 returns low order part of D
+%   High and low order parts of a DD number D can be references
+%   by using dotReference or braceReference:
+%
+%       * D1 = D.v1 or D{1} returns high order part of D
+%       * D2 = D.v2 or D{2} returns low order part of D
+%       * D{:}              returns high and low order part of D
 %
 %   double() also returns high and low order parts of a DD number D:
 %
@@ -76,3 +78,4 @@
 %   revised ... 2024-03-28 ... UCHINO Yuki
 %   revised ... 2024-06-22 ... UCHINO Yuki
 %   revised ... 2024-08-29 ... UCHINO Yuki
+%   revised ... 2024-09-18 ... UCHINO Yuki
