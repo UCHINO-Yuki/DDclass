@@ -1,5 +1,5 @@
 % A double-double class toolbox for MATLAB
-% Version 1.12.0 18-Sep-2024
+% Version 1.12.1 20-Feb-2026
 %
 %   The following special functions are provided:
 %
@@ -79,3 +79,4 @@
 %   revised ... 2024-06-22 ... UCHINO Yuki
 %   revised ... 2024-08-29 ... UCHINO Yuki
 %   revised ... 2024-09-18 ... UCHINO Yuki
+%   revised ... 2026-02-20 ... UCHINO Yuki
